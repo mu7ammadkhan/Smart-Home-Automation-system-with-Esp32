@@ -5,7 +5,7 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/models/Users";
 
 type TokenPayload = JwtPayload & {
-  userID?: string;
+  userId?: string;
 };
 
 export async function GET(req: Request) {
@@ -49,8 +49,8 @@ export async function GET(req: Request) {
       );
     }
 
-    const userID = decoded.userID || (decoded as any).uid;
-    if (!userID) {
+    const userId = (decoded as any).userId;
+    if (!userId) {
       return NextResponse.json(
         { success: false, message: "Unauthorized: invalid token payload" },
         { status: 401 },
@@ -59,7 +59,7 @@ export async function GET(req: Request) {
 
     // Fetch user
     await connectDB();
-    const user = await User.findById(userID).select(
+    const user = await User.findById(userId).select(
       "_id name email createdAt ",
     );
     if (!user) {

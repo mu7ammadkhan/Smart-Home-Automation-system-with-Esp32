@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     if (!email || !password) {
       return NextResponse.json(
         { success: false, message: "Email and password are required." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     if (!user) {
       return NextResponse.json(
         { success: false, message: "Invalid credentials." },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     if (!isMatch) {
       return NextResponse.json(
         { success: false, message: "Invalid credentials." },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -44,33 +44,50 @@ export async function POST(req: Request) {
     if (!secret) {
       return NextResponse.json(
         { success: false, message: "JWT_SECRET is missing in .env.local." },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
-    const token = jwt.sign(
-      { uid: user._id.toString(), email: user.email },
-      secret,
-      { expiresIn: "7d" }
-    );
+    const token = jwt.sign({ userId: user._id.toString() }, secret, {
+      expiresIn: "7d",
+    });
 
-    return NextResponse.json(
+    // ==================== CHANGE START: Set JWT in HttpOnly Cookie (Middleware can read) ====================
+    // Before: token was returned in JSON (less secure, middleware can't read localStorage)
+    // Now: token is stored in an HttpOnly cookie so middleware can protect routes automatically.
+    
+    const res = NextResponse.json(
       {
         success: true,
         message: "Login successful.",
-        token,
         user: {
           id: user._id.toString(),
           name: user.name,
           email: user.email,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
+
+    res.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    return res;
+    // ==================== CHANGE END ====================
+
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, message: "Something went wrong.", error: error?.message },
-      { status: 500 }
+      {
+        success: false,
+        message: "Something went wrong.",
+        error: error?.message,
+      },
+      { status: 500 },
     );
   }
 }
