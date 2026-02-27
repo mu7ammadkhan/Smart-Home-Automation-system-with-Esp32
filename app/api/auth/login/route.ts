@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto"; // ===== CHANGE: needed to generate secure random refresh token + hash =====
+import RefreshToken from "@/models/RefreshToken"; // ===== CHANGE: DB model for storing refresh sessions =====
 
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/Users";
@@ -21,7 +23,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // fetch user + password (only needed if schema has select:false)
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
@@ -48,14 +49,39 @@ export async function POST(req: Request) {
       );
     }
 
-    const token = jwt.sign({ userId: user._id.toString() }, secret, {
-      expiresIn: "7d",
+    // ==================== CHANGE START: PRODUCTION-LEVEL TOKEN SYSTEM ====================
+
+    // 1) Short-lived access token (JWT)
+    const accessToken = jwt.sign(
+      { userId: user._id.toString() },
+      secret,
+      { expiresIn: "15m" } // short expiry for security
+    );
+
+    // 2) Long-lived refresh token (random string, NOT JWT)
+    const refreshToken = crypto.randomBytes(64).toString("hex");
+
+    // 3) Store HASH of refresh token in DB (never store raw token)
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(refreshToken)
+      .digest("hex");
+
+    const refreshExpiresAt = new Date(
+      Date.now() + 1000 * 60 * 60 * 24 * 30 // 30 days
+    );
+
+    await RefreshToken.create({
+      userId: user._id,
+      tokenHash,
+      expiresAt: refreshExpiresAt,
+      userAgent: (req as any).headers?.get?.("user-agent") ?? "",
+      ip:
+        (req as any).headers?.get?.("x-forwarded-for") ??
+        "",
     });
 
-    // ==================== CHANGE START: Set JWT in HttpOnly Cookie (Middleware can read) ====================
-    // Before: token was returned in JSON (less secure, middleware can't read localStorage)
-    // Now: token is stored in an HttpOnly cookie so middleware can protect routes automatically.
-    
+    // 4) Send response + set secure cookies
     const res = NextResponse.json(
       {
         success: true,
@@ -69,15 +95,28 @@ export async function POST(req: Request) {
       { status: 200 },
     );
 
-    res.cookies.set("token", token, {
+    // Access token cookie (short-lived)
+    res.cookies.set("accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 15, // 15 minutes
     });
 
+    // Refresh token cookie (long-lived)
+    res.cookies.set("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
+
+    res.headers.set("Cache-Control", "no-store");
+
     return res;
+
     // ==================== CHANGE END ====================
 
   } catch (error: any) {
