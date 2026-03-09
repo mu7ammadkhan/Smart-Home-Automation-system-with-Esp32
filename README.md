@@ -47,25 +47,7 @@ Nova Control consists of four main components.
 
 # Diagram
 
-User (Web Dashboard)
-          |
-          v
-Next.js Web App - Frontend + APIs
-          |
-          | API Calls
-          v
-   MongoDB | Users / Rooms / Devices / States
-          |
-          | MQTT Publish
-          v
-     MQTT Broker     
-          |
-          | MQTT Subscribe
-          v
-     ESP32 Device              
-          |
-          v
-Relays / Appliances /Lights / Fans etc
+User (Web Dashboard) => Next.js Web App - Frontend + APIs => API Calls =>  MongoDB | Users / Rooms / Devices / States => MQTT Publish => MQTT Broker => MQTT Subscribe => ESP32 Device => Relays / Appliances /Lights / Fans etc
 
 # Features
 
