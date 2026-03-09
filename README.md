@@ -62,10 +62,14 @@ MQTT Topics Structure
 # The platform uses a structured MQTT topic format for device communication.
 
 users/{userId}/devices/{deviceId}/commands
+#
 users/{userId}/devices/{deviceId}/status
+#
 users/{userId}/devices/{deviceId}/heartbeat
+#
 users/{userId}/devices/{deviceId}/sensor-data
-Topic Purpose
+
+# Topic Purpose
 
 # commands
 Backend sends control commands to ESP32 devices.
