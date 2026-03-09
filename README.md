@@ -82,51 +82,33 @@ ESP32 periodically sends online status.
 
 # Device Communication Flow
 
-User clicks control button
-        |
-        v
-Next.js API receives request
-        |
-        v
-Backend publishes MQTT command
-        |
-        v
-ESP32 receives command
-        |
-        v
-Relay switches ON/OFF
-        |
-        v
-ESP32 publishes status update
-        |
-        v
-Dashboard updates device state
-ESP32 Communication Example
+User clicks control button ==> Next.js API receives request ==> Backend publishes MQTT command ==> ESP32 receives command ==> Relay switches ON/OFF ==> ESP32 publishes status update ==> Dashboard updates device state
 
-Example command topic
-
+# ESP32 Communication  Example
+#
 users/u123/devices/dev001/commands
 
-Example command payload
-
+# Example command payload
+#
 {
   "action": "toggle",
   "state": "on",
   "timestamp": "2026-03-10T18:00:00Z"
 }
 
-Example status topic
-
+# Example status topic
+#
 users/u123/devices/dev001/status
-
-Example status payload
-
+#
+# Example status payload
+#
 {
   "state": "on",
   "online": true,
   "timestamp": "2026-03-10T18:00:02Z"
 }
-Running the Project Locally
+#
+# Running the Project Locally
 
 Clone the repository
 
@@ -154,6 +136,7 @@ Device analytics and monitoring
 ## Author
 
 Muhammad Khan
+#
 Full Stack JavaScript Developer | React.js | Next.js | JavaScript | TypeScript | MongoDB | Firebase | IoT | Esp32 
 
 # LinkedIn
