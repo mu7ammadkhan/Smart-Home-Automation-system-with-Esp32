@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nova Control
 
-## Getting Started
+Nova Control is a smart home automation platform that connects a modern web dashboard with ESP32 based IoT devices.
 
-First, run the development server:
+The system allows users to control electrical devices, manage rooms and devices, and monitor device states through a web interface.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This project is currently being developed using **Next.js, MongoDB, MQTT, and ESP32 devices**.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Frontend
+- Next.js
+- React
+- TypeScript / JavaScript
 
-## Learn More
+Backend
+- Next.js API Routes
+- Node.js
 
-To learn more about Next.js, take a look at the following resources:
+Database
+- MongoDB
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+IoT Communication
+- MQTT
+- ESP32
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Deployment
+- Vercel
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- User authentication
+- Room management
+- Device management
+- Device control from dashboard
+- Real-time communication with IoT devices
+- Device state monitoring
+
+---
+
+# System Architecture
+
+The system consists of four main parts:
+
+1. Web Dashboard  
+   Users control devices through a Next.js web interface.
+
+2. Backend APIs  
+   API routes handle authentication, device management, and system logic.
+
+3. Database  
+   MongoDB stores users, rooms, and device information.
+
+4. IoT Communication  
+   MQTT enables real-time communication between the web platform and ESP32 devices.
+
+---
+
+# Device Communication Flow
+
+1. User sends a command from the dashboard  
+2. Backend processes the request  
+3. Command is published to MQTT broker  
+4. ESP32 device receives the command  
+5. Device performs the action (ON/OFF etc)  
+6. Device publishes status update  
+7. Web dashboard updates device state
+
+---
+
+# Running the Project Locally
+
+Clone the repository
+git clone
+https://github.com/mu7ammadkhan/Smart-Home-Automation-system-with-Esp32.git
+
+Install dependencies
+
+Open in browser
+
+---
+
+# Future Improvements
+
+- Automation rules
+- AI smart Voice recognization
+- Mobile application
+- Offline control mode
+- Device analytics
+
+---
+
+# Author
+
+Muhammad Khan
+
+LinkedIn  
+https://www.linkedin.com/in/muhammad-khan-017b8829b
+
+Fiverr  
+https://www.fiverr.com/muhammad_khan67
