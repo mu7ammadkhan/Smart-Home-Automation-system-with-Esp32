@@ -12,6 +12,7 @@ Frontend
 - Next.js
 - React
 - TypeScript / JavaScript
+- Tailwind CSS
 
 Backend
 - Next.js API Routes
